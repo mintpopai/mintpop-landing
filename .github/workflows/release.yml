@@ -1,0 +1,140 @@
+name: Release
+
+# 发版：tag vX.Y.Z 触发，先过质量门禁，再构建并推送镜像 + 创建 GitHub Release。
+# 推送到 main 永不触发；保留 workflow_dispatch 作为手动逃生口（紧急重推 / 回滚验证，不建 Release）。
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  # 门禁内置到发版：lint/build 不过则不构建、不推送（直推 main 场景的稳妥兜底）
+  quality:
+    name: Quality
+    uses: ./.github/workflows/quality.yml
+
+  build-push:
+    name: Build & Push Image
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # 私有部署型（amd64）：不上 QEMU，但保留 Buildx 以用 gha 层缓存
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE }}
+          # 单组件仓：type=semver 默认剥掉 v 前缀（vX.Y.Z -> X.Y.Z）
+          tags: |
+            type=semver,pattern={{version}}
+            type=sha,enable=${{ github.ref_type != 'tag' }}
+          # latest=auto：仅非预发布版本才追加 latest
+          flavor: |
+            latest=auto
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release-notes:
+    name: GitHub Release
+    needs: quality
+    # 仅 tag 触发才建 Release，workflow_dispatch 逃生口不建
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # COMMIT 模式需要全量历史，才能定位上个同前缀 tag
+          fetch-depth: 0
+
+      - name: Build changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v6
+        with:
+          # 直推 main 无 PR：按提交（commit）构建，不依赖 PR
+          mode: COMMIT
+          configurationJson: |
+            {
+              "label_extractor": [
+                {
+                  "pattern": "^(feat|fix|perf|refactor|revert|build|chore|ci|docs|style|test)[^:]*:.*",
+                  "target": "$1",
+                  "on_property": "title"
+                }
+              ],
+              "categories": [
+                { "title": "### ✨ 新功能", "labels": ["feat"] },
+                { "title": "### 🐛 修复", "labels": ["fix"] },
+                { "title": "### ⚡ 优化", "labels": ["perf"] },
+                { "title": "### ♻️ 重构", "labels": ["refactor"] },
+                { "title": "### ⏪ 回滚", "labels": ["revert"] }
+              ],
+              "template": "#{{CHANGELOG}}",
+              "empty_template": "_本次无面向用户的变更_"
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assemble notes
+        # annotated tag 注释置顶 + 过滤后的 changelog
+        env:
+          TAG: ${{ github.ref_name }}
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+        run: |
+          : > notes.md
+          # checkout 对 tag 触发常只落指向 commit 的轻量本地 ref，强制拉一次 annotated tag 对象。
+          # 拉取失败可容忍（|| true）：后果仅是降级为按轻量 tag 处理、注释不置顶，
+          # 不该让整个发版失败；--quiet 只压进度输出，stderr 保留，真失败时日志可见
+          git fetch --force --quiet origin "refs/tags/${TAG}:refs/tags/${TAG}" || true
+          # 轻量 tag 直接指向 commit，%(contents) 会误把 commit 信息当注释，故先判类型
+          if [ "$(git cat-file -t "$TAG")" = "tag" ]; then
+            git tag -l --format='%(contents)' "$TAG" >> notes.md
+            printf '\n\n' >> notes.md
+          fi
+          printf '%s\n' "$CHANGELOG" >> notes.md
+          # 空正文兜底：注释为空 + 变更日志被全过滤（有提交但全是 chore/ci/docs）时
+          # 正文会整篇空白，action 的 empty_content 兜不住这种情形，这里统一判空补占位
+          if [ -z "$(tr -d '[:space:]' < notes.md)" ]; then
+            echo "- 本次无面向用户的变更" > notes.md
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          # 标题 = 产品名 + 版本号（ref_name 形如 v0.1.0）
+          name: MintPop Landing ${{ github.ref_name }}
+          body_path: notes.md

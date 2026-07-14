@@ -1,0 +1,38 @@
+name: Quality
+
+# 可复用质量门禁：lint + 类型检查 + 构建。
+# CI（合并前）与发版（推镜像前）共用同一份定义，避免漂移（DRY）。
+on:
+  workflow_call:
+
+# 显式最小权限：质量门禁只需读代码（被 release.yml 调用时也不放大权限）
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+
+      - name: Install dependencies
+        # --frozen：CI 按 lockfile 精确还原，对不上即失败（不静默改写），保证可复现
+        run: mise run install --frozen
+
+      - name: Format check
+        run: mise run format --check
+
+      - name: Lint
+        run: mise run lint
+
+      - name: Test
+        run: mise run test
+
+      # build 任务内含 vue-tsc 类型检查（vue-tsc -b && vite build）
+      - name: Typecheck & Build
+        run: mise run build
