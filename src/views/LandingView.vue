@@ -59,6 +59,13 @@ useHead({
       </p>
       <p class="description">{{ t('landing.description') }}</p>
       <a class="cta" href="https://mintpop.ai">{{ t('landing.cta') }}</a>
+
+      <section class="notices" :aria-label="t('landing.notices.title')">
+        <h2 class="notices-title">{{ t('landing.notices.title') }}</h2>
+        <ul class="notices-list">
+          <li>{{ t('landing.notices.consoleMigration') }}</li>
+        </ul>
+      </section>
     </div>
 
     <footer class="footer">{{ t('landing.footer') }}</footer>
@@ -150,6 +157,34 @@ useHead({
 
 .cta:hover {
   background: var(--mint-deep);
+}
+
+.notices {
+  margin-top: 16px;
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  text-align: left;
+}
+
+.notices-title {
+  margin: 0 0 6px;
+  color: var(--mint-deep);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.notices-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 .footer {

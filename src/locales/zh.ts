@@ -11,5 +11,9 @@ export default {
     switchLocale: '切换语言',
     logoAlt: 'MintPop',
     footer: 'MintPop · Pop into something fresh.',
+    notices: {
+      title: '公告',
+      consoleMigration: 'console.mintpop.ai 已迁移至 api.mintpop.ai。',
+    },
   },
 } satisfies typeof en

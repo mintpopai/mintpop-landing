@@ -28,6 +28,14 @@ describe('LandingView', () => {
     expect(cta.text()).toBe('Take me to mintpop.ai')
   })
 
+  it('渲染公告区及迁移公告', () => {
+    const wrapper = mountLanding()
+    expect(wrapper.get('.notices-title').text()).toBe('Notices')
+    expect(wrapper.get('.notices-list').text()).toBe(
+      'console.mintpop.ai has moved to api.mintpop.ai.',
+    )
+  })
+
   it('挂载后域名药丸显示 location.hostname', async () => {
     const wrapper = mountLanding()
     // onMounted 的赋值在下一个渲染刷新周期才反映到 DOM
