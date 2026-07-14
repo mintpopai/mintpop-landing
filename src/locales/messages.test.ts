@@ -33,7 +33,7 @@ describe('locales', () => {
       expect(values.length).toBeGreaterThan(0)
       for (const value of values) {
         expect(typeof value).toBe('string')
-        expect(value).not.toBe('')
+        expect((value as string).trim()).not.toBe('')
       }
     }
   })
