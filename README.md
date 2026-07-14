@@ -12,6 +12,12 @@ MintPop 未配置子域名的统一兜底页：Cloudflare 上 `*.mintpop.ai` wil
 - 中英双语：`localStorage 偏好 > navigator.language（含 zh 判中文）> 英文`，不走 URL 前缀。
 - 不做「旧子域 → 新地址」映射：真要迁移某子域，请在 DNS/网关层做 301。
 
+## 验证状态
+
+- nginx 全站 404 语义已通过静态评审，但**尚未在容器内实测**（开发机无 Docker）；
+  首次部署后请按「行为约定」逐条 curl 核验（`/` 返回 404 + 兜底 HTML、`/assets/*` 与
+  `/robots.txt` 返回 200、响应头含 `X-Robots-Tag: noindex, nofollow`）。
+
 ## 技术栈
 
 Vue 3 + vite-ssg 预渲染（catch-all 单路由）· vue-i18n · @unhead/vue ·
