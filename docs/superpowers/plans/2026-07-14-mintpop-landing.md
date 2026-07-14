@@ -28,10 +28,12 @@
 ### Task 1: 项目脚手架与静态资产
 
 **Files:**
+
 - Create: `mise.toml`、`package.json`、`pnpm-workspace.yaml`、`.prettierrc.json`、`.prettierignore`、`tsconfig.json`、`tsconfig.app.json`、`tsconfig.node.json`、`tsconfig.vitest.json`、`eslint.config.ts`、`env.d.ts`、`vite.config.ts`、`index.html`、`public/robots.txt`、`public/brand/*`（拷贝）
 - Modify: `.gitignore`
 
 **Interfaces:**
+
 - Produces: 可用的构建/测试工具链（`mise run install/run/build/lint/test/format/typecheck` 全部可跑）；`@` 别名指向 `src/`；vite-ssg 构建产物 `dist/`（nested dirStyle）；构建结束的 SSG head 冒烟断言（要求 `dist/index.html` 含 `<title>` 与 `Nothing here` 与 `noindex`——Task 4 的页面必须满足它）。
 
 - [ ] **Step 1: 从主站原样拷贝可复用配置**
@@ -218,10 +220,12 @@ git commit -m "chore: 项目脚手架（mise/vite-ssg/eslint/prettier）与品�
 ### Task 2: 语言判定与安全存储（TDD）
 
 **Files:**
+
 - Create: `src/config/locale.ts`、`src/utils/safeStorage.ts`
 - Test: `src/config/locale.test.ts`、`src/utils/safeStorage.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `Locale`（const 对象 + 类型，`Locale.EN = 'en'`、`Locale.ZH = 'zh'`）
   - `LOCALE_LABELS: Record<Locale, string>`（`en → 'EN'`，`zh → '中文'`）
@@ -324,10 +328,12 @@ git commit -m "feat: 语言判定纯函数与 localStorage 安全读写"
 ### Task 3: 中英文案与 i18n 装配（TDD）
 
 **Files:**
+
 - Create: `src/locales/en.ts`、`src/locales/zh.ts`、`src/locales/index.ts`
 - Test: `src/locales/messages.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Locale`（Task 2）
 - Produces:
   - `createAppI18n()`（返回 vue-i18n 实例，legacy: false，默认/回退 EN）
@@ -452,10 +458,12 @@ git commit -m "feat: 中英文案与 vue-i18n 装配"
 ### Task 4: 页面本体与样式（TDD）
 
 **Files:**
+
 - Create: `src/App.vue`、`src/views/LandingView.vue`、`src/main.ts`、`src/styles/theme.css`、`src/styles/base.css`
 - Test: `src/views/LandingView.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createAppI18n()`（Task 3）、`Locale / LOCALE_LABELS / STORAGE_KEY_LOCALE / detectLocale / safeStorageGet / safeStorageSet`（Task 2）
 - Produces: vite-ssg 入口 `createApp`（`main.ts` 导出）；catch-all 路由（任意路径渲染 LandingView）
 
@@ -808,6 +816,7 @@ git commit -m "feat: 兜底页页面本体（单屏布局、域名药丸、语�
 ### Task 5: 构建链路验证
 
 **Files:**
+
 - 无新文件（只跑门禁，发现问题就地修）
 
 - [ ] **Step 1: 跑完整质量门禁**
@@ -841,9 +850,11 @@ git commit -m "fix: 构建门禁修复"   # 无改动则跳过本步
 ### Task 6: Docker 镜像、nginx 404 语义与 compose
 
 **Files:**
+
 - Create: `Dockerfile`、`Dockerfile.dockerignore`、`nginx.conf`、`docker-compose.yml`
 
 **Interfaces:**
+
 - Consumes: `mise run install --frozen`、`mise run build`（Dockerfile 内使用）
 - Produces: 镜像 `mintpop-landing:local`；运行行为——页面路径 404 + 兜底 HTML、静态资源 200、全站 `X-Robots-Tag`
 
@@ -1000,9 +1011,11 @@ git commit -m "feat: Docker 镜像与 nginx 全站 404 兜底语义、compose �
 ### Task 7: GitHub Actions 工作流
 
 **Files:**
+
 - Create: `.github/workflows/quality.yml`、`.github/workflows/ci.yml`、`.github/workflows/release.yml`、`.github/workflows/action-notify.yml`
 
 **Interfaces:**
+
 - Consumes: mise tasks（install/format/lint/test/build，Task 1）；`Dockerfile`（Task 6）
 - Produces: PR/push 门禁；`v*` tag → 质量门禁 → GHCR 镜像 → GitHub Release；飞书通知
 
@@ -1026,13 +1039,13 @@ cp ../mintpop-website/.github/workflows/release.yml .github/workflows/
 把 `Create Release` step 里的
 
 ```yaml
-          name: MintPop ${{ github.ref_name }}
+name: MintPop ${{ github.ref_name }}
 ```
 
 改为
 
 ```yaml
-          name: MintPop Landing ${{ github.ref_name }}
+name: MintPop Landing ${{ github.ref_name }}
 ```
 
 其余逐字保留（`env.IMAGE: ghcr.io/${{ github.repository }}` 会自动解析为本仓镜像名，无需改）。
@@ -1063,6 +1076,7 @@ git commit -m "ci: 质量门禁、发版（GHCR + GitHub Release）与飞书通�
 ### Task 8: README 与收尾
 
 **Files:**
+
 - Create: `README.md`
 
 - [ ] **Step 1: 写 `README.md`**：
