@@ -16,4 +16,10 @@
   --text: #0b0b0c;
   --text2: #6b7280;
   --border: #e5e7eb;
+
+  /* 衍生色（由品牌基线派生，仅本页使用）：深薄荷墨做标题，泡泡体做签名元素 */
+  --ink: #12352b;
+  --bubble-hi: #ffffff;
+  --bubble-lo: #e7f9f3;
+  --mint-halo: rgba(23, 209, 167, 0.1);
 }

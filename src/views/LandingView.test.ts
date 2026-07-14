@@ -36,11 +36,11 @@ describe('LandingView', () => {
     )
   })
 
-  it('挂载后域名药丸显示 location.hostname', async () => {
+  it('挂载后域名泡泡显示 location.hostname', async () => {
     const wrapper = mountLanding()
     // onMounted 的赋值在下一个渲染刷新周期才反映到 DOM
     await nextTick()
-    expect(wrapper.get('.host-pill').text()).toContain(window.location.hostname)
+    expect(wrapper.get('.host-bubble').text()).toContain(window.location.hostname)
   })
 
   it('localStorage 记忆为 zh 时，挂载后自动切换为中文', async () => {

@@ -1,7 +1,10 @@
 // 英文词条 —— 文案真相源；zh.ts 以本文件结构为类型约束
 export default {
   landing: {
-    title: "There's nothing popping here.",
+    // 标题拆三段：中段是强调词（视图里加薄荷波浪线），三段拼接即完整句子
+    titlePre: "There's nothing ",
+    titleMark: 'popping',
+    titlePost: ' here.',
     placeholderHost: 'this address',
     description:
       "This address isn't home to any MintPop product — it may have moved, or the URL may be mistyped.",
