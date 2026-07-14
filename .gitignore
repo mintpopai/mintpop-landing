@@ -1,6 +1,8 @@
 # 本地工程文件不入库（见 project-hygiene 规范）
 .idea/
 .claude/
+.superpowers/
+docs/superpowers/
 node_modules/
 dist/
 *.log
