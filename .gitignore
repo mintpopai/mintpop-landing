@@ -1,0 +1,3 @@
+# 本地工程文件不入库（见 project-hygiene 规范）
+.idea/
+.claude/
