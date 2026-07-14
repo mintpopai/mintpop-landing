@@ -9,11 +9,10 @@ import { safeStorageSet } from '@/utils/safeStorage'
 const { t, locale } = useI18n()
 
 // SSG 预渲染期没有 window：先渲染占位文案，客户端挂载后填入真实域名
-const hostname = ref(typeof window !== 'undefined' ? window.location.hostname : '')
+// （只在 onMounted 赋值：水合首帧与预渲染 HTML 保持一致，避免 hydration mismatch）
+const hostname = ref('')
 onMounted(() => {
-  if (!hostname.value) {
-    hostname.value = window.location.hostname
-  }
+  hostname.value = window.location.hostname
 })
 
 const otherLocale = computed<Locale>(() => (locale.value === Locale.ZH ? Locale.EN : Locale.ZH))

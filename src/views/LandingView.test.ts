@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { nextTick } from 'vue'
 
 import { mount } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
@@ -27,9 +28,10 @@ describe('LandingView', () => {
     expect(cta.text()).toBe('Take me to mintpop.ai')
   })
 
-  it('挂载后域名药丸显示 location.hostname', () => {
+  it('挂载后域名药丸显示 location.hostname', async () => {
     const wrapper = mountLanding()
-    // jsdom 默认 location 为 http://localhost:3000/
+    // onMounted 的赋值在下一个渲染刷新周期才反映到 DOM
+    await nextTick()
     expect(wrapper.get('.host-pill').text()).toContain(window.location.hostname)
   })
 
