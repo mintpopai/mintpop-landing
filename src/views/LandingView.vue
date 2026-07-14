@@ -3,8 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 
-import { Locale, LOCALE_LABELS, STORAGE_KEY_LOCALE } from '@/config/locale'
-import { safeStorageSet } from '@/utils/safeStorage'
+import { detectLocale, Locale, LOCALE_LABELS, STORAGE_KEY_LOCALE } from '@/config/locale'
+import { safeStorageGet, safeStorageSet } from '@/utils/safeStorage'
 
 const { t, locale } = useI18n()
 
@@ -13,6 +13,9 @@ const { t, locale } = useI18n()
 const hostname = ref('')
 onMounted(() => {
   hostname.value = window.location.hostname
+  // 语言判定放在挂载后：水合首帧与预渲染英文 HTML 保持一致，避免 hydration mismatch；
+  // 代价是中文用户首帧有一次英文闪现，这是 spec 选定的行为
+  locale.value = detectLocale(safeStorageGet(STORAGE_KEY_LOCALE), navigator.language)
 })
 
 const otherLocale = computed<Locale>(() => (locale.value === Locale.ZH ? Locale.EN : Locale.ZH))

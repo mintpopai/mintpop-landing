@@ -35,6 +35,13 @@ describe('LandingView', () => {
     expect(wrapper.get('.host-pill').text()).toContain(window.location.hostname)
   })
 
+  it('localStorage 记忆为 zh 时，挂载后自动切换为中文', async () => {
+    localStorage.setItem(STORAGE_KEY_LOCALE, 'zh')
+    const wrapper = mountLanding()
+    await nextTick()
+    expect(wrapper.get('h1').text()).toBe('这里空空如也')
+  })
+
   it('点语言切换：文案变中文并写入 localStorage', async () => {
     const wrapper = mountLanding()
     await wrapper.get('.locale-switch').trigger('click')
