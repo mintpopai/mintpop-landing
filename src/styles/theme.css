@@ -1,0 +1,19 @@
+/*
+ * 主题变量：取品牌设计基线默认值（standards.mintpop.ai/global/design-baseline）。
+ * 兜底页只做浅色单主题（单屏提示页，克制优先，不做暗色分支）。
+ * 字体 Fredoka（展示）/ Inter（正文）经 Fontsource 自托管，在 main.ts 引入。
+ */
+:root {
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Fredoka', var(--font-sans);
+
+  --mint: #17d1a7;
+  --mint-deep: #0fb389;
+  --bg: #f4f8f6;
+  --card: #ffffff;
+  --text: #0b0b0c;
+  --text2: #6b7280;
+  --border: #e5e7eb;
+}
