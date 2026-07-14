@@ -68,7 +68,7 @@ jobs:
 
   release-notes:
     name: GitHub Release
-    needs: quality
+    needs: [quality, build-push]
     # 仅 tag 触发才建 Release，workflow_dispatch 逃生口不建
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
