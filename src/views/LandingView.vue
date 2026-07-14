@@ -45,12 +45,13 @@ useHead({
     </button>
 
     <div class="content">
+      <!-- 字标引用 standards.mintpop.ai（原图 1233×342），仓库内不留副本 -->
       <img
         class="mark"
-        src="/brand/mintpop-icon-256.png"
+        src="https://standards.mintpop.ai/assets/brand/wordmark/mintpop-wordmark-dark.png"
         :alt="t('landing.logoAlt')"
-        width="72"
-        height="72"
+        width="216"
+        height="60"
       />
       <h1 class="title">{{ t('landing.title') }}</h1>
       <p class="host-pill">

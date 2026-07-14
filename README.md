@@ -7,7 +7,7 @@ MintPop 未配置子域名的统一兜底页：Cloudflare 上 `*.mintpop.ai` wil
 
 - **所有页面路径（含根路径）返回 HTTP 404**，响应体是预渲染的兜底页——对爬虫/监控诚实表达
   「此地址无内容」，避免 wildcard 子域被当成无数重复站点收录（软 404）。
-- 静态资源（`/assets/`、`/brand/`、`robots.txt`）正常 200；探活请用 `/robots.txt`。
+- 静态资源（`/assets/`、`robots.txt`）正常 200；探活请用 `/robots.txt`。品牌图（图标/字标）直接引用 `standards.mintpop.ai`，仓库内不留副本。
 - 全站 `noindex, nofollow`（响应头 + meta + robots.txt 三重）。
 - 中英双语：`localStorage 偏好 > navigator.language（含 zh 判中文）> 英文`，不走 URL 前缀。
 - 不做「旧子域 → 新地址」映射：真要迁移某子域，请在 DNS/网关层做 301。
