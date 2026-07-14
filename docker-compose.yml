@@ -1,0 +1,20 @@
+# 生产部署：拉取 GHCR 已发布镜像运行。
+#   - 默认拉 latest，可用 LANDING_TAG 指定版本：LANDING_TAG=0.1.0 docker compose up -d
+#   - 宿主端口可用 LANDING_PORT 覆盖（默认 80）
+#   - 镜像为私有时，服务器需先 `docker login ghcr.io`
+#   - 镜像由 CI（release.yml）构建推送；本地构建用 `mise run image`，不归 compose 管
+services:
+  web:
+    image: ghcr.io/mintpopai/mintpop-landing:${LANDING_TAG:-latest}
+    container_name: mintpop-landing
+    restart: unless-stopped
+    ports:
+      # 只绑宿主 127.0.0.1，对外由宿主反向代理/Cloudflare 隧道接管
+      - '127.0.0.1:${LANDING_PORT:-80}:80'
+    healthcheck:
+      # 页面路径按设计一律返回 404，探活用恒为 200 的 robots.txt
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1/robots.txt >/dev/null 2>&1 || exit 1']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

@@ -1,0 +1,15 @@
+# per-Dockerfile ignore：BuildKit 优先用本文件，不读根 .dockerignore
+node_modules
+dist
+dist-ssr
+.git
+.github
+.idea
+.claude
+.vscode
+*.log
+.DS_Store
+# 构建用不到的部署/文档文件
+docker-compose.yml
+README.md
+docs
