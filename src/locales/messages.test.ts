@@ -13,6 +13,15 @@ function keyPaths(obj: Record<string, unknown>, prefix = ''): string[] {
   })
 }
 
+/** 递归收集对象的全部叶子值 */
+function leafValues(obj: Record<string, unknown>): unknown[] {
+  return Object.values(obj).flatMap((value) =>
+    typeof value === 'object' && value !== null
+      ? leafValues(value as Record<string, unknown>)
+      : [value],
+  )
+}
+
 describe('locales', () => {
   it('中英文案 key 完全一致（漏译/多译都报错）', () => {
     expect(keyPaths(zh).sort()).toEqual(keyPaths(en).sort())
@@ -20,8 +29,12 @@ describe('locales', () => {
 
   it('文案值非空', () => {
     for (const messages of [en, zh]) {
-      const flatten = keyPaths(messages)
-      expect(flatten.length).toBeGreaterThan(0)
+      const values = leafValues(messages)
+      expect(values.length).toBeGreaterThan(0)
+      for (const value of values) {
+        expect(typeof value).toBe('string')
+        expect(value).not.toBe('')
+      }
     }
   })
 })
