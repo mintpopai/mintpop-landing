@@ -84,7 +84,7 @@ jobs:
       - name: 解析上一版同前缀稳定 tag
         id: prev
         env:
-          PREFIX: ""
+          PREFIX: ''
           TAG: ${{ github.ref_name }}
         run: |
           # shallow clone 下 describe 会静默失准，宁可中止也不产出一份错的变更日志
